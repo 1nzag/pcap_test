@@ -10,7 +10,7 @@ void parse_packet(const u_char *packet,int length)
 	packet += sizeof(eth_header);
 	
 	ip_header = (struct ip*)packet;
-	parse_ip(ip_header); // tcp size - tcp header size
+	parse_ip(ip_header);
 	packet += sizeof(ip_header);
 	
 	tcp_header = (struct tcphdr*)packet;

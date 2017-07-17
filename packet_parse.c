@@ -59,6 +59,6 @@ void parse_ip(struct ip* ip_header)
 void parse_tcp(struct tcphdr *tcp_header)
 {
 	printf("* TCP INFOMATION\n");
-	printf("SOURCE PORT: %u\n",(unsigned short)tcp_header->th_sport);
-	printf("DESTINATION PORT: %u\n",(unsigned short)tcp_header->th_dport);
+	printf("SOURCE PORT: %d\n",ntohs(tcp_header->source));
+	printf("DESTINATION PORT: %d\n",ntohs(tcp_header->dest));
 }

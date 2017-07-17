@@ -4,21 +4,23 @@ void parse_packet(const u_char *packet,int length)
 	struct ether_header *eth_header; // ethernet header
 	struct ip *ip_header; //ip header
 	struct tcphdr *tcp_header;//tcp header
+	const u_char *crit = packet;
 
 	eth_header = (struct ether_header*)packet;
 	parse_ethernet(eth_header);
-	packet += sizeof(eth_header);
+	packet += 14; // ethernet header size
 	
 	ip_header = (struct ip*)packet;
 	parse_ip(ip_header);
-	packet += sizeof(ip_header);
+	packet += ((ip_header -> ip_hl) * 4); // ip header size
 	
 	tcp_header = (struct tcphdr*)packet;
 	parse_tcp(tcp_header);
-	packet += sizeof(tcp_header);
+	packet += ((tcp_header -> th_off) * 4); // tcp header size
 	
 	printf("DATA:\n");
-	write(1,packet,length - (sizeof(eth_header) + sizeof(ip_header) + sizeof(tcp_header)));
+	printf("%d\n",packet - crit);
+	write(1,packet,length - (int)(packet - crit));
 	printf("\n");
 
 }

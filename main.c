@@ -1,10 +1,12 @@
 #include "packet_parse.h"
+#include <ctype.h>
 void parse_packet(const u_char *packet,int length)
 {
 	struct ether_header *eth_header; // ethernet header
 	struct ip *ip_header; //ip header
 	struct tcphdr *tcp_header;//tcp header
 	const u_char *crit = packet;
+	int i;
 
 	eth_header = (struct ether_header*)packet;
 	parse_ethernet(eth_header);
@@ -20,7 +22,21 @@ void parse_packet(const u_char *packet,int length)
 	
 	printf("DATA:\n");
 	printf("%d\n",packet - crit);
-	write(1,packet,length - (int)(packet - crit));
+	for(i=0;i<16;i++)
+	{
+		if(i > packet - crit)
+		{
+			break;
+		}
+		if(isprint((char)*(packet+i)))
+		{
+			printf("%c",(char)*(packet+i));
+		}
+		else
+		{
+			printf(".");
+		}
+	}
 	printf("\n");
 
 }

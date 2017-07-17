@@ -42,7 +42,7 @@ void parse_ip(struct ip* ip_header)
 	addr = (int)(ip_header->ip_src).s_addr;
 	for(i=0;i<4;i++)
 	{
-		printf("%d", (addr >> (8 * (3 - i))) & 0xff);
+		printf("%d", (addr >> (8 * i)) & 0xff);
 		if(i == 3) {printf("\n"); break;}
 		printf(".");
 	}
@@ -50,7 +50,7 @@ void parse_ip(struct ip* ip_header)
 	addr = (int)(ip_header->ip_dst).s_addr;
 	for(i=0;i<4;i++)
 	{
-		printf("%d", (addr >> (8 * (3 - i))) & 0xff);
+		printf("%d", (addr >> (8 * i)) & 0xff);
 		if(i == 3){printf("\n");break;}
 		printf(".");
 	}

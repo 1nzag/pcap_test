@@ -2,6 +2,10 @@
 #include <net/ethernet.h>
 #include <netinet/ip.h>
 #include <netinet/tcp.h>
+#include <arpa/inet.h>
+#include <stdint.h>
+
+
 
 #ifndef __parse_ethernet_h__
 #define __parse_ethernet_h__

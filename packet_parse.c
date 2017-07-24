@@ -5,7 +5,7 @@
 void parse_ethernet(struct ether_header* eth_header)
 {
 	int i;
-	unsigned char addr;
+	uint8_t addr;
 	printf("* ETHERNET INFOMATION\n");
 	printf("SOURCE MAC: ");
 	for(i = 0; i < 6; i++)
@@ -36,24 +36,13 @@ void parse_ethernet(struct ether_header* eth_header)
 void parse_ip(struct ip* ip_header)
 {
 	int i;
-	unsigned int addr;
+	char src_addr[INET_ADDRSTRLEN] = {0,};
+	char dest_addr[INET_ADDRSTRLEN] = {0,};
 	printf("* IP INFOMATION\n");
-	printf("SOURCE IP: ");
-	addr = (int)(ip_header->ip_src).s_addr;
-	for(i=0;i<4;i++)
-	{
-		printf("%d", (addr >> (8 * i)) & 0xff);
-		if(i == 3) {printf("\n"); break;}
-		printf(".");
-	}
-	printf("DESTINATION IP: ");
-	addr = (int)(ip_header->ip_dst).s_addr;
-	for(i=0;i<4;i++)
-	{
-		printf("%d", (addr >> (8 * i)) & 0xff);
-		if(i == 3){printf("\n");break;}
-		printf(".");
-	}
+	inet_ntop(AF_INET,&(ip_header->ip_src).s_addr,src_addr,sizeof(src_addr));
+	inet_ntop(AF_INET,&(ip_header->ip_dst).s_addr,dest_addr,sizeof(src_addr));
+	printf("SOURCE IP: %s",src_addr);
+	printf("DESTINATION IP: %s", dest_addr);
 }
 
 void parse_tcp(struct tcphdr *tcp_header)

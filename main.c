@@ -7,27 +7,34 @@ void parse_packet(const u_char *packet,int length)
 	struct tcphdr *tcp_header;//tcp header
 	const u_char *crit = packet;
 	int i;
-
+	uint16_t datalen = 0;
 	eth_header = (struct ether_header*)packet;
+	if(ntohs(eth_header->ether_type) != 0x0800)
+	{
+		return;
+	}//IP filter
 	parse_ethernet(eth_header);
 	packet += 14; // ethernet header size
 	
 	ip_header = (struct ip*)packet;
+	if(ip_header->ip_p != 6)
+	{
+		return ;
+	}//TCP filter
+	datalen = ntohs(ip_header->ip_len) - (ntohl(ip_header->ip_hl) * 4);
 	parse_ip(ip_header);
 	packet += ((ip_header -> ip_hl) * 4); // ip header size
 	
 	tcp_header = (struct tcphdr*)packet;
+	datalen -= (tcp_header -> th_off * 4);
 	parse_tcp(tcp_header);
 	packet += ((tcp_header -> th_off) * 4); // tcp header size
 	
+
 	printf("DATA:\n");
-	printf("%d\n",packet - crit);
-	for(i=0;i<16;i++)
+	printf("DATA LENGTH: %d\n",datalen);
+	for(i=0;i<datalen;i++)
 	{
-		if(i > packet - crit)
-		{
-			break;
-		}
 		if(isprint((char)*(packet+i)))
 		{
 			printf("%c",(char)*(packet+i));
@@ -44,7 +51,7 @@ void parse_packet(const u_char *packet,int length)
 
 
 
-int main(void)
+int main(int argc, char *argv[])
 {
 	pcap_t *handle;
 	char *dev;
@@ -58,10 +65,13 @@ int main(void)
 	const u_char *p_data;
 	int count = 0;
 
-	dev  = pcap_lookupdev(errbuf);
-	pcap_lookupnet(dev, &net, &mask, errbuf);
+	if(argc != 2)
+	{
+		printf("Usage: ./pcap_test [device]\n");
+		return 0;
+	}
 	
-	handle = pcap_open_live(dev, BUFSIZ, 1, 1000,errbuf);
+	handle = pcap_open_live(argv[1], BUFSIZ, 1, 1000,errbuf);
 	pcap_compile(handle, &fp, filter_exp, 0, net);
 	pcap_setfilter(handle, &fp);
 	
